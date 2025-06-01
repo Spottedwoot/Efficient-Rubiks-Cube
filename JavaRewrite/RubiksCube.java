@@ -340,13 +340,16 @@ public class RubiksCube {
         this.solution = "";
     }
 
+    public void resetLastMove(){
+        this.lastmove = "";
+    }
+
     public Boolean G1(){
         Boolean result = true;
         String whiteface = this.state.substring(9,18);
         String yellowface = this.state.substring(45,54);
-
-        result = result && whiteface.indexOf("g")==-1 && whiteface.indexOf("r")==-1 && whiteface.indexOf("o")==-1 && whiteface.indexOf("b")!=-1;
-        result = result && yellowface.indexOf("g")==-1 && yellowface.indexOf("r")==-1 && yellowface.indexOf("o")==-1 && yellowface.indexOf("b")!=-1;
+        result = result && whiteface.indexOf("g")==-1 && whiteface.indexOf("r")==-1 && whiteface.indexOf("o")==-1 && whiteface.indexOf("b")==-1;
+        result = result && yellowface.indexOf("g")==-1 && yellowface.indexOf("r")==-1 && yellowface.indexOf("o")==-1 && yellowface.indexOf("b")==-1;
         Boolean greenok = (this.state.charAt(3)== "g".charAt(0)|| this.state.charAt(3)=="b".charAt(0)) && (this.state.charAt(5)=="g".charAt(0)|| this.state.charAt(5)=="b".charAt(0));
         Boolean blueok = (this.state.charAt(39)== "g".charAt(0)|| this.state.charAt(39)=="b".charAt(0)) && (this.state.charAt(41)=="g".charAt(0)|| this.state.charAt(41)=="b".charAt(0));
         Boolean orangeok = (this.state.charAt(30)== "o".charAt(0)|| this.state.charAt(30)=="r".charAt(0)) && (this.state.charAt(32)=="r".charAt(0)|| this.state.charAt(32)=="o".charAt(0));
