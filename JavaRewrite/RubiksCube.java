@@ -1,4 +1,4 @@
-
+import java.util.Arrays;
 
 public class RubiksCube {
     public String lastmove;
@@ -344,7 +344,14 @@ public class RubiksCube {
         this.lastmove = "";
     }
 
-    public Boolean G1(){
+    public Boolean isSolved(){
+        if(this.state.equals("gggggggggwwwwwwwwwrrrrrrrrrooooooooobbbbbbbbbyyyyyyyyy")){
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean G1wy(){
         Boolean result = true;
         String whiteface = this.state.substring(9,18);
         String yellowface = this.state.substring(45,54);
@@ -355,6 +362,30 @@ public class RubiksCube {
         Boolean orangeok = (this.state.charAt(30)== "o".charAt(0)|| this.state.charAt(30)=="r".charAt(0)) && (this.state.charAt(32)=="r".charAt(0)|| this.state.charAt(32)=="o".charAt(0));
         Boolean redok = (this.state.charAt(21)== "o".charAt(0)|| this.state.charAt(21)=="r".charAt(0)) && (this.state.charAt(23)=="r".charAt(0)|| this.state.charAt(23)=="o".charAt(0));
         result = result && greenok && blueok && orangeok && redok;
+        return result;
+    }
+
+    public Boolean G1bg(){
+        Boolean result = true;
+        String greenface = this.state.substring(0,9);
+        String blueface = this.state.substring(36,45);
+        result = result && greenface.indexOf("w")==-1 && greenface.indexOf("r")==-1 && greenface.indexOf("o")==-1 && greenface.indexOf("y")==-1;
+        result = result && blueface.indexOf("w")==-1 && blueface.indexOf("r")==-1 && blueface.indexOf("o")==-1 && blueface.indexOf("y")==-1;
+        Boolean orangeok = (this.state.charAt(28)== "o".charAt(0)|| this.state.charAt(28)=="r".charAt(0)) && (this.state.charAt(34)=="r".charAt(0)|| this.state.charAt(34)=="o".charAt(0));
+        Boolean redok = (this.state.charAt(19)== "o".charAt(0)|| this.state.charAt(19)=="r".charAt(0)) && (this.state.charAt(25)=="r".charAt(0)|| this.state.charAt(25)=="o".charAt(0));
+        result = result && orangeok && redok;
+        return result;
+    }
+
+    public Boolean G1ro(){
+        Boolean result = true;
+        String redface = this.state.substring(18,27);
+        String orangeface = this.state.substring(27,36);
+        result = result && redface.indexOf("g")==-1 && redface.indexOf("w")==-1 && redface.indexOf("y")==-1 && redface.indexOf("b")==-1;
+        result = result && orangeface.indexOf("g")==-1 && orangeface.indexOf("w")==-1 && orangeface.indexOf("y")==-1 && orangeface.indexOf("b")==-1;
+        Boolean greenok = (this.state.charAt(1)== "g".charAt(0)|| this.state.charAt(1)=="b".charAt(0)) && (this.state.charAt(7)=="g".charAt(0)|| this.state.charAt(7)=="b".charAt(0));
+        Boolean blueok = (this.state.charAt(37)== "g".charAt(0)|| this.state.charAt(37)=="b".charAt(0)) && (this.state.charAt(43)=="g".charAt(0)|| this.state.charAt(43)=="b".charAt(0));
+        result = result && greenok && blueok;
         return result;
     }
 
@@ -434,5 +465,210 @@ public class RubiksCube {
             }
 
         }
+    }
+
+    public int[] findCornerOrientation(){
+        int[] corner_orientation = new int[8];
+        int[] stickers_to_check = {9, 11, 15, 17, 45, 47, 51, 53};
+        for(int i = 0; i < 8; i++){
+            if("y".equals(this.state.substring(stickers_to_check[i],stickers_to_check[i]+1))||"w".equals(this.state.substring(stickers_to_check[i],stickers_to_check[i]+1)) ){
+                corner_orientation[i] = 0;
+            }
+            else{
+                if (i==0){
+                    if(this.state.charAt(27)=="w".charAt(0) || this.state.charAt(27)=="y".charAt(0)){
+                        corner_orientation[i] = 1;
+                    }
+                    else{
+                        corner_orientation[i] = -1;
+                    }
+                }
+
+                if (i==2){
+                    if(this.state.charAt(0)=="w".charAt(0) || this.state.charAt(0)=="y".charAt(0)){
+                        corner_orientation[i] = 1;
+                    }
+                    else{
+                        corner_orientation[i] = -1;
+                    }
+                }
+
+                if (i==3){
+                    if(this.state.charAt(18)=="w".charAt(0) || this.state.charAt(18)=="y".charAt(0)){
+                        corner_orientation[i] = 1;
+                    }
+                    else{
+                        corner_orientation[i] = -1;
+                    }
+                }
+
+                if (i==1){
+                    if(this.state.charAt(36)=="w".charAt(0) || this.state.charAt(36)=="y".charAt(0)){
+                        corner_orientation[i] = 1;
+                    }
+                    else{
+                        corner_orientation[i] = -1;
+                    }
+                }
+
+                if (i==4){
+                    if(this.state.charAt(26)=="w".charAt(0) || this.state.charAt(26)=="y".charAt(0)){
+                        corner_orientation[i] = 1;
+                    }
+                    else{
+                        corner_orientation[i] = -1;
+                    }
+                }
+
+                if (i==5){
+                    if(this.state.charAt(44)=="w".charAt(0) || this.state.charAt(44)=="y".charAt(0)){
+                        corner_orientation[i] = 1;
+                    }
+                    else{
+                        corner_orientation[i] = -1;
+                    }
+                }
+
+                if (i==6){
+                    if(this.state.charAt(8)=="w".charAt(0) || this.state.charAt(8)=="y".charAt(0)){
+                        corner_orientation[i] = 1;
+                    }
+                    else{
+                        corner_orientation[i] = -1;
+                    }
+                }
+
+                if (i==7){
+                    if(this.state.charAt(35)=="w".charAt(0) || this.state.charAt(35)=="y".charAt(0)){
+                        corner_orientation[i] = 1;
+                    }
+                    else{
+                        corner_orientation[i] = -1;
+                    }
+                }
+            }
+        }
+        return corner_orientation;
+    }
+
+    public Boolean cornersOriented(){
+        int[] corner_orientation = this.findCornerOrientation();
+        for(int i = 0; i < corner_orientation.length; i++){
+            if(corner_orientation[i]== -1 ||corner_orientation[i]== 1 ){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int[] middleEdgesPostion(){
+        int[] edge_position = new int[12];
+        int[] stickers_to_check = {10, 12, 14, 16, 46, 48, 50, 52, 3, 5, 39, 41};
+        for(int i =0; i < 12; i++){
+            if(this.state.charAt(stickers_to_check[i])=="y".charAt(0) ||this.state.charAt(stickers_to_check[i])=="w".charAt(0)){
+                edge_position[i] = 1;
+            }
+            else{
+                edge_position[i] = 0;
+            }
+        }
+        return edge_position;
+    }
+
+    public Boolean middleEdgesCorrect(){
+        int[] edge_position = middleEdgesPostion();
+        if(edge_position[9] == 0 && edge_position[10] == 0 && edge_position[8] == 0 && edge_position[11] == 0){
+            return true;
+        }
+        return false;
+    }
+
+    public int[] middleEdgeAndCornerOrientation(){
+        int[] corner_orientation = findCornerOrientation();
+        int[] middle_edges = middleEdgesPostion();
+        int[] combined = new int[corner_orientation.length + middle_edges.length];
+
+        for(int i = 0; i<corner_orientation.length; i++){
+            combined[i] = corner_orientation[i];
+        }
+        for(int i = 0; i<middle_edges.length; i++){
+            combined[i+8] = middle_edges[i];
+        }
+        return combined;
+    }
+
+    public int[] edgeOrientations(){
+        int[] edgeOrientations = new int[12];
+        int[] stickers_to_check_RL = {10, 12, 14, 16, 46, 48, 50, 52, 3, 5, 39, 41};
+        int[] stickers_to_check_UD = {37, 28, 19, 1, 43, 25, 34, 7, 32, 21, 23, 30};
+        for(int i = 0; i<12; i++){
+            if(this.state.charAt(stickers_to_check_RL[i])=="r".charAt(0) ||this.state.charAt(stickers_to_check_RL[i])=="o".charAt(0)){
+                edgeOrientations[i] = -1;
+            }
+            else if(this.state.charAt(stickers_to_check_UD[i])=="w".charAt(0) ||this.state.charAt(stickers_to_check_UD[i])=="y".charAt(0)){
+                edgeOrientations[i] = -1;
+            }
+            else{
+                edgeOrientations[i] = 0;
+            }
+        }
+        return edgeOrientations;
+    }
+
+    public Boolean edgesOriented(){
+        int[] edgeOrientations = edgeOrientations();
+        for(int i = 0; i<12; i++){
+            if(edgeOrientations[i]==-1){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Boolean G3(){
+        Boolean result = true;
+        String greenface = this.state.substring(0,9);
+        String blueface = this.state.substring(36,45);
+        String whiteface = this.state.substring(9,18);
+        String yellowface = this.state.substring(45,54);
+        String redface = this.state.substring(18,27);
+        String orangeface = this.state.substring(27,36);
+        for(int i = 0; i< 9; i++){
+            result = (greenface.charAt(i) == "g".charAt(0) ||  greenface.charAt(i) == "b".charAt(0)) && result;
+            result = (blueface.charAt(i) == "g".charAt(0) ||  blueface.charAt(i) == "b".charAt(0)) && result;
+            result = (whiteface.charAt(i) == "y".charAt(0) ||  whiteface.charAt(i) == "w".charAt(0)) && result;
+            result = (yellowface.charAt(i) == "y".charAt(0) ||  yellowface.charAt(i) == "w".charAt(0)) && result;
+            result = (redface.charAt(i) == "o".charAt(0) ||  redface.charAt(i) == "r".charAt(0)) && result;
+            result = (orangeface.charAt(i) == "o".charAt(0) ||  orangeface.charAt(i) == "r".charAt(0)) && result;
+        }
+        int count = 0;
+        if(this.state.charAt(9)=="w".charAt(0) && this.state.charAt(47)=="y".charAt(0)){
+            count++;
+        }
+        if(this.state.charAt(11)=="w".charAt(0) && this.state.charAt(45)=="y".charAt(0)){
+            count++;
+        }
+        if(this.state.charAt(15)=="w".charAt(0) && this.state.charAt(53)=="y".charAt(0)){
+            count++;
+        }
+        if(this.state.charAt(17)=="w".charAt(0) && this.state.charAt(51)=="y".charAt(0)){
+            count++;
+        }
+
+        if(this.state.charAt(9)=="y".charAt(0) && this.state.charAt(47)=="w".charAt(0)){
+            count++;
+        }
+        if(this.state.charAt(11)=="y".charAt(0) && this.state.charAt(45)=="w".charAt(0)){
+            count++;
+        }
+        if(this.state.charAt(15)=="y".charAt(0) && this.state.charAt(53)=="w".charAt(0)){
+            count++;
+        }
+        if(this.state.charAt(17)=="y".charAt(0) && this.state.charAt(51)=="w".charAt(0)){
+            count++;
+        }
+
+        result = result && count%4==0;
+        return result;
     }
 }
