@@ -2,143 +2,45 @@ import java.util.*;
 
 public class Client {
     public static void main(String[] args){
-        RubiksCube cube = new RubiksCube();
-        cube.doScramble("R B' U R' F2 R2 F B2 L D2 B2 U2 R' U2 D2 F2 R' D2 B D'");
+        int failed = 0;
+        double averageTime = 0;
+        int iterations = 100;
+        for(int i = 0; i<iterations; i++){
+            RubiksCube cube = new RubiksCube();
+        long time1 = System.currentTimeMillis();
+        cube.randomScramble();
         cube.resetSolution();
         cube.resetLastMove();
         RubiksCube phaseOne = phaseOne(cube);
+        System.out.println("Phase 1 Done");
         RubiksCube phaseTwo = phaseTwo(phaseOne);
+        System.out.println("Phase 2 Done");
         RubiksCube phaseThree = phaseThree(phaseTwo);
-        RubiksCube newcube = phaseFour(phaseThree);
-        System.out.println(newcube.getSolution());
-        newcube.print();
-    }
-
-    public static RubiksCube kociembaPhaseOne(RubiksCube cube){
-        Queue<RubiksCube> queue = new LinkedList<>();
-        queue.add(cube);
-        HashSet<String> seenBefore = new HashSet<>();
-        if (cube.G1wy() ||cube.G1bg() || cube.G1ro()){
-            return cube;
+        System.out.println("Phase 3 Done");
+        if(phaseThree == null){
+            failed ++;
+            System.out.println("Failed");;
         }
-        int count = 0;
-        while  (!queue.isEmpty()){
-            RubiksCube s= queue.remove();
-            if (seenBefore.contains(s.getState())){
-                continue;
+        else{
+            RubiksCube newcube = phaseFour(phaseThree);
+            if(newcube == null){
+                failed ++;
+            System.out.println("Failed");;
             }
-            if(!s.getLastMove().equals("R") && !s.getLastMove().equals("R'") && !s.getLastMove().equals("R2")){
-                RubiksCube sr = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sr.r();
-                RubiksCube srprime = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                srprime.rprime();
-                RubiksCube sr2 = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sr2.r2();
-                if (srprime.G1wy() ||srprime.G1bg() || srprime.G1ro()){
-                    return srprime;
-                }
-                if (sr.G1wy() ||sr.G1bg() || sr.G1ro()){
-                    return sr;
-                }
-                queue.add(sr);
-                queue.add(sr2);
-                queue.add(srprime);
+            else{
+                System.out.println("Solved");
+            System.out.println(newcube.getSolution());
+            newcube.print();
+            long time2 = System.currentTimeMillis();
+            long timeTaken = (time2-time1);
+            double timeSeconds = (double) timeTaken;
+            averageTime += timeSeconds/1000;
+            System.out.println("Time: " + timeSeconds/1000);
             }
-            if(!s.getLastMove().equals("L") && !s.getLastMove().equals("L'") && !s.getLastMove().equals("L2")){
-                RubiksCube sl = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sl.l();
-                RubiksCube slprime = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                slprime.lprime();
-                RubiksCube sl2 = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sl2.l2();
-                if (slprime.G1wy() ||slprime.G1bg() || slprime.G1ro()){
-                    return slprime;
-                }
-                if (sl.G1wy() ||sl.G1bg() || sl.G1ro()){
-                    return sl;
-                }
-                queue.add(sl);
-                queue.add(sl2);
-                queue.add(slprime);
-            }
-            if(!s.getLastMove().equals("F") && !s.getLastMove().equals("F'") && !s.getLastMove().equals("F2")){
-                RubiksCube sf = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sf.f();
-                RubiksCube sfprime = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sfprime.fprime();
-                RubiksCube sf2 = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sf2.f2();
-                if (sfprime.G1wy() ||sfprime.G1bg() || sfprime.G1ro()){
-                    return sfprime;
-                }
-                if (sf.G1wy() ||sf.G1bg() || sf.G1ro()){
-                    return sf;
-                }
-                queue.add(sf);
-                queue.add(sf2);
-                queue.add(sfprime);
-            }
-            if(!s.getLastMove().equals("B") && !s.getLastMove().equals("B'") && !s.getLastMove().equals("B2")){
-                RubiksCube sb = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sb.b();
-                RubiksCube sbprime = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sbprime.bprime();
-                RubiksCube sb2 = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sb2.b2();
-                if (sbprime.G1wy() ||sbprime.G1bg() || sbprime.G1ro()){
-                    return sbprime;
-                }
-                if (sb.G1wy() ||sb.G1bg() || sb.G1ro()){
-                    return sb;
-                }
-                queue.add(sb);
-                queue.add(sb2);
-                queue.add(sbprime);
-            }
-            if(!s.getLastMove().equals("D") && !s.getLastMove().equals("D'") && !s.getLastMove().equals("D2")){
-                RubiksCube sd = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sd.d();
-                RubiksCube sdprime = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sdprime.dprime();
-                RubiksCube sd2 = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                sd2.d2();
-                if (sdprime.G1wy() ||sdprime.G1bg() || sdprime.G1ro()){
-                    return sdprime;
-                }
-                if (sd.G1wy() ||sd.G1bg() || sd.G1ro()){
-                    return sd;
-                }
-                queue.add(sd);
-                queue.add(sd2);
-                queue.add(sdprime);
-            }
-            if(!s.getLastMove().equals("U") && !s.getLastMove().equals("U'") && !s.getLastMove().equals("U2")){
-                RubiksCube su = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                su.u();
-                RubiksCube suprime = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                suprime.uprime();
-                RubiksCube su2 = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
-                su2.u2();
-                if (suprime.G1wy() ||suprime.G1bg() || suprime.G1ro()){
-                    return suprime;
-                }
-                if (su.G1wy() ||su.G1bg() || su.G1ro()){
-                    return su;
-                }
-                queue.add(su);
-                queue.add(su2);
-                queue.add(suprime);
-            }
-            count += 1;
-            System.out.println(s.getSolution());
-            System.out.println(count);
-            System.out.println(seenBefore.size());
-            if(count == 1000000){
-                return s;
-            }
-            seenBefore.add(s.getState());
         }
-        return null;
+        }
+        System.out.println("Times Failed: " + failed);
+        System.out.println("Average Time: " + averageTime/iterations);
     }
 
     public static RubiksCube phaseOne(RubiksCube cube){
@@ -257,12 +159,7 @@ public class Client {
                 queue.add(suprime);
             }
             count += 1;
-            System.out.println(s.getSolution());
-            System.out.println(count);
-            if(count == 10000){
-                for (String element : seenBefore) {
-                    System.out.println(element);
-                }
+            if(count == 1000000){
                 return s;
             }
             seenBefore.add(Arrays.toString(s.edgeOrientations()));
@@ -350,8 +247,6 @@ public class Client {
                 queue.add(suprime);
             }
             count += 1;
-            System.out.println(s.getSolution());
-            System.out.println(count);
             if(count == 10000000){
                 return s;
             }
@@ -364,14 +259,14 @@ public class Client {
         Queue<RubiksCube> queue = new LinkedList<>();
         queue.add(cube);
         HashSet<String> seenBefore = new HashSet<>();
-        HashSet<String> G3 = findG3();
-        if (G3.contains(cube.getState())){
+        HashSet<String> findG3 = findG3();
+        if (cube.G3()){
             return cube;
         }
         int count = 0;
         while  (!queue.isEmpty()){
             RubiksCube s= queue.remove();
-            if (seenBefore.contains(s.getState())){
+            if (seenBefore.contains(Arrays.toString(s.G3position()))){
                 continue;
             }
             if(!s.getLastMove().equals("R") && !s.getLastMove().equals("R'") && !s.getLastMove().equals("R2")){
@@ -401,10 +296,16 @@ public class Client {
                 sdprime.dprime();
                 RubiksCube sd2 = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
                 sd2.d2();
-                if (G3.contains(sdprime.getState())){
+                if (findG3.contains(sdprime.getState())){
                     return sdprime;
                 }
-                if (G3.contains(sd.getState())){
+                if (findG3.contains(sd.getState())){
+                    return sd;
+                }
+                if(sdprime.G3()){
+                    return sdprime;
+                }
+                if(sd.G3()){
                     return sd;
                 }
                 queue.add(sd);
@@ -418,10 +319,16 @@ public class Client {
                 suprime.uprime();
                 RubiksCube su2 = new RubiksCube(s.getState(), s.getLastMove(), s.getSolution());
                 su2.u2();
-                if (G3.contains(suprime.getState())){
+                if (findG3.contains(suprime.getState())){
                     return suprime;
                 }
-                if (G3.contains(su.getState())){
+                if (findG3.contains(su.getState())){
+                    return su;
+                }
+                if(suprime.G3()){
+                    return suprime;
+                }
+                if(su.G3()){
                     return su;
                 }
                 queue.add(su);
@@ -429,12 +336,10 @@ public class Client {
                 queue.add(suprime);
             }
             count += 1;
-            System.out.println(s.getSolution());
-            System.out.println(count);
             if(count == 10000000){
                 return s;
             }
-            seenBefore.add(s.getState());
+            seenBefore.add(Arrays.toString(s.G3position()));
         }
         return null;
     }
@@ -501,8 +406,6 @@ public class Client {
                 queue.add(su2);
             }
             count += 1;
-            System.out.println(s.getSolution());
-            System.out.println(count);
             if(count == 10000000){
                 return s;
             }
@@ -516,7 +419,6 @@ public class Client {
         Queue<RubiksCube> queue = new LinkedList<>();
         queue.add(cube);
         HashSet<String> seenBefore = new HashSet<>();
-        int count = 0;
         while  (!queue.isEmpty()){
             RubiksCube s= queue.remove();
             if (seenBefore.contains(s.getState())){
@@ -552,7 +454,6 @@ public class Client {
                 su2.u2();
                 queue.add(su2);
             }
-            count += 1;
             seenBefore.add(s.getState());
         }
         return seenBefore;
