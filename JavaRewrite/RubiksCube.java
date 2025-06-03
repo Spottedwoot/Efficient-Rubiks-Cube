@@ -4,6 +4,7 @@ public class RubiksCube {
     public String lastmove;
     public String solution;
     public String state;
+    public final String[] correct_corner_position = {"wob", "wbr", "wgo", "wrg", "yrb", "ybo", "ygr", "yog"};
 
     public RubiksCube(){
         this.lastmove = "";
@@ -626,49 +627,107 @@ public class RubiksCube {
     }
 
     public Boolean G3(){
-        Boolean result = true;
-        String greenface = this.state.substring(0,9);
-        String blueface = this.state.substring(36,45);
-        String whiteface = this.state.substring(9,18);
-        String yellowface = this.state.substring(45,54);
-        String redface = this.state.substring(18,27);
-        String orangeface = this.state.substring(27,36);
-        for(int i = 0; i< 9; i++){
-            result = (greenface.charAt(i) == "g".charAt(0) ||  greenface.charAt(i) == "b".charAt(0)) && result;
-            result = (blueface.charAt(i) == "g".charAt(0) ||  blueface.charAt(i) == "b".charAt(0)) && result;
-            result = (whiteface.charAt(i) == "y".charAt(0) ||  whiteface.charAt(i) == "w".charAt(0)) && result;
-            result = (yellowface.charAt(i) == "y".charAt(0) ||  yellowface.charAt(i) == "w".charAt(0)) && result;
-            result = (redface.charAt(i) == "o".charAt(0) ||  redface.charAt(i) == "r".charAt(0)) && result;
-            result = (orangeface.charAt(i) == "o".charAt(0) ||  orangeface.charAt(i) == "r".charAt(0)) && result;
-        }
-        int count = 0;
-        if(this.state.charAt(9)=="w".charAt(0) && this.state.charAt(47)=="y".charAt(0)){
-            count++;
-        }
-        if(this.state.charAt(11)=="w".charAt(0) && this.state.charAt(45)=="y".charAt(0)){
-            count++;
-        }
-        if(this.state.charAt(15)=="w".charAt(0) && this.state.charAt(53)=="y".charAt(0)){
-            count++;
-        }
-        if(this.state.charAt(17)=="w".charAt(0) && this.state.charAt(51)=="y".charAt(0)){
-            count++;
+        int[] correct = {0,0,0,0,0,0,0,0,0,1,1,0,2,3,3,2,0};
+        return Arrays.equals(correct,this.G3position());
+    }
+
+    public int[] rlSlice(){
+        int[] slice_edges = new int[8];
+        int[] stickers_to_check = {1,7,37,43,19,25,28,34};
+        for(int i = 0; i<8; i++){
+            if(i<4){
+                if(this.state.charAt(stickers_to_check[i])=="r".charAt(0) || this.state.charAt(stickers_to_check[i])=="o".charAt(0)){
+                    slice_edges[i] = 1;
+                }
+                else{
+                    slice_edges[i] = 0;
+                }
+            }
+            else{
+                if(this.state.charAt(stickers_to_check[i])=="r".charAt(0) || this.state.charAt(stickers_to_check[i])=="o".charAt(0)){
+                    slice_edges[i] = 0;
+                }
+                else{
+                    slice_edges[i] = 1;
+                }
+            }
         }
 
-        if(this.state.charAt(9)=="y".charAt(0) && this.state.charAt(47)=="w".charAt(0)){
-            count++;
-        }
-        if(this.state.charAt(11)=="y".charAt(0) && this.state.charAt(45)=="w".charAt(0)){
-            count++;
-        }
-        if(this.state.charAt(15)=="y".charAt(0) && this.state.charAt(53)=="w".charAt(0)){
-            count++;
-        }
-        if(this.state.charAt(17)=="y".charAt(0) && this.state.charAt(51)=="w".charAt(0)){
-            count++;
-        }
+        return slice_edges;
+    }
 
-        result = result && count%4==0;
-        return result;
+    public int[] cornerPairs(){
+        String[] corner_positions = cornerPositions();
+        int[] cornerPairs = new int[8];
+        for(int i =0; i<8; i++){
+            int correct_index = Arrays.asList(this.correct_corner_position).indexOf(corner_positions[i]);
+            if(correct_index == 0 || correct_index == 3){
+                cornerPairs[i] = 0;
+            }
+            if(correct_index == 1 || correct_index == 2){
+                cornerPairs[i] = 1;
+            }
+            if(correct_index == 4 || correct_index == 7){
+                cornerPairs[i] = 2;
+            }
+            if(correct_index == 5 || correct_index == 6){
+                cornerPairs[i] = 3;
+            }
+        }
+        return cornerPairs;
+    }
+
+    public int cornerParity(String[] corner_position, int parity){
+        for(int i = 0; i<8; i++){
+            if(!corner_position[i].equals(this.correct_corner_position[i])){
+                int correct_index = Arrays.asList(this.correct_corner_position).indexOf(corner_position[i]);
+                String swapped_corner = corner_position[correct_index];
+                corner_position[correct_index] = corner_position[i];
+                corner_position[i] = swapped_corner;
+                parity += 1;
+                return cornerParity(corner_position, parity%2);
+            }
+        }
+        return parity;
+    }
+
+
+    public String[] cornerPositions(){
+        String[] corner_position = new String[8];
+        corner_position[0] = this.state.substring(9,10) + this.state.charAt(27) + this.state.charAt(38);
+        corner_position[1] = this.state.substring(11,12) + this.state.charAt(36) + this.state.charAt(20);
+        corner_position[2] = this.state.substring(15,16) + this.state.charAt(0) + this.state.charAt(29);
+        corner_position[3] = this.state.substring(17,18) + this.state.charAt(18) + this.state.charAt(2);
+        corner_position[4] = this.state.substring(45,46) + this.state.charAt(26) + this.state.charAt(42);
+        corner_position[5] = this.state.substring(47,48) + this.state.charAt(44) + this.state.charAt(33);
+        corner_position[6] = this.state.substring(51,52) + this.state.charAt(8) + this.state.charAt(24);
+        corner_position[7] = this.state.substring(53,54) + this.state.charAt(35) + this.state.charAt(6);
+        return corner_position;
+    }
+
+    public int[] G3position(){
+        int[] rlslice = this.rlSlice();
+        int[] corner_pairs = this.cornerPairs();
+        int parity = this.cornerParity(this.cornerPositions(), 0);
+        int[] G3position = new int[rlslice.length + corner_pairs.length + 1];
+        for(int i =0; i<rlslice.length; i++){
+            G3position[i] = rlslice[i];
+        }
+        for(int i = 0; i<corner_pairs.length; i++){
+            G3position[i+rlslice.length] = corner_pairs[i];
+        }
+        G3position[G3position.length -1] = parity;
+        return G3position;
+    }
+
+    public void randomScramble(){
+        String[] moves = {"R","R'","R2","D","D'","D2","L","L2","L'","U","U'","U2", "F","F'","F2","B","B2","B'"};
+        String scramble = "";
+        for(int i = 0; i< 30; i++){
+            int randomNumber = (int) (Math.random() * (18));
+            scramble += moves[randomNumber] + " ";
+        }
+        this.doScramble(scramble);
+
     }
 }
